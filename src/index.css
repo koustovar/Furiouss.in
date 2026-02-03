@@ -5,18 +5,17 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: #0a0a0a;
-    color: #ffffff;
+    @apply bg-background text-white;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   body {
     @apply overflow-x-hidden;
   }
 
   ::selection {
-    @apply bg-blue-500/30 text-blue-200;
+    @apply bg-red-500/30 text-red-200;
   }
 }
 
@@ -26,16 +25,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #050505;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: #27272a;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: #de1c1c;
 }
 
 /* Base styles for the cursor to ensure it sits on top */

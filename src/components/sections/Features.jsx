@@ -4,32 +4,32 @@ import { Layout, Smartphone, Zap, Code, Shield, Globe } from 'lucide-react';
 
 const featuresData = [
     {
-        icon: <Layout className="w-8 h-8 text-blue-400" />,
+        icon: <Layout className="w-8 h-8 text-primary" />,
         title: 'Modern Design',
         description: 'Aesthetically pleasing layouts with focus on whitespace and typography.'
     },
     {
-        icon: <Smartphone className="w-8 h-8 text-pink-400" />,
+        icon: <Smartphone className="w-8 h-8 text-white" />,
         title: 'Responsive',
         description: 'Perfectly adaptable interfaces that look great on any device size.'
     },
     {
-        icon: <Zap className="w-8 h-8 text-yellow-400" />,
+        icon: <Zap className="w-8 h-8 text-red-400" />,
         title: 'High Performance',
         description: 'Optimized for speed and SEO to ensure smooth user experience.'
     },
     {
-        icon: <Code className="w-8 h-8 text-green-400" />,
+        icon: <Code className="w-8 h-8 text-gray-400 group-hover:text-primary transition-colors" />,
         title: 'Clean Code',
         description: 'Maintainable and scalable codebase following best practices.'
     },
     {
-        icon: <Shield className="w-8 h-8 text-purple-400" />,
+        icon: <Shield className="w-8 h-8 text-white" />,
         title: 'Secure',
         description: 'Best security practices implemented from the ground up.'
     },
     {
-        icon: <Globe className="w-8 h-8 text-cyan-400" />,
+        icon: <Globe className="w-8 h-8 text-primary" />,
         title: 'SEO Friendly',
         description: 'Built with search engines in mind to increase your visibility.'
     }

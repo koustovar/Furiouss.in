@@ -17,10 +17,10 @@ const projects = [
         description: "High-conversion landing page designed for a modern SaaS startup with 3D elements."
     },
     {
-        title: "Portfolio Theme",
-        category: "Design System",
-        image: "https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=2680&auto=format&fit=crop",
-        description: "A minimalist portfolio template for creatives, built with pure CSS and vanilla JS."
+        title: "Fintech Dashboard",
+        category: "Web Application",
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop",
+        description: "Real-time cryptocurrency trading platform with websocket integration and charting."
     }
 ];
 

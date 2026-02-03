@@ -29,7 +29,7 @@ const Hero = () => {
             {/* Background Elements */}
             <div className="absolute inset-0 bg-background z-0">
                 <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/10 blur-[120px] rounded-full" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/20 blur-[120px] rounded-full" />
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 bg-noise" />
             </div>
 
@@ -48,10 +48,10 @@ const Hero = () => {
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
-                    className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40"
+                    className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 text-white"
                 >
                     Building Digital <br />
-                    <span className="text-white">Masterpieces</span>
+                    <span className="text-primary drop-shadow-[0_0_15px_rgba(222,28,28,0.5)]">Masterpieces</span>
                 </motion.h1>
 
                 <motion.p

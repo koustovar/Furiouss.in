@@ -13,9 +13,9 @@ const Button = ({
     const baseStyles = "px-6 py-3 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer relative overflow-hidden group";
 
     const variants = {
-        primary: "bg-white text-black hover:bg-gray-200 border border-transparent",
-        outline: "bg-transparent text-white border border-white/20 hover:border-white hover:bg-white/5",
-        ghost: "bg-transparent text-gray-400 hover:text-white"
+        primary: "bg-primary text-white hover:bg-red-700 border border-transparent shadow-[0_0_20px_rgba(222,28,28,0.3)] hover:shadow-[0_0_30px_rgba(222,28,28,0.5)]",
+        outline: "bg-transparent text-white border border-white/10 hover:border-primary hover:text-primary hover:bg-white/5",
+        ghost: "bg-transparent text-gray-400 hover:text-primary hover:bg-white/5"
     };
 
     return (
