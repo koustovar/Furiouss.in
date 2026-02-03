@@ -25,4 +25,4 @@ A modern personal portfolio website built with React, designed to showcase proje
 
 Clone the repository:
 ```bash
-git clone https://github.com/koustovar/personal-portfolio.git
+git https://github.com/koustovar/Furious-portfolio.git
