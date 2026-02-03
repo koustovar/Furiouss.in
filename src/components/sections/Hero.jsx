@@ -1,0 +1,94 @@
+import React, { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import Button from '../ui/Button';
+import MagneticButton from '../ui/MagneticButton';
+import gsap from 'gsap';
+
+const Hero = () => {
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        // Subtle background movement effect using GSAP
+        const ctx = gsap.context(() => {
+            gsap.to(".bg-noise", {
+                backgroundPosition: "100% 100%",
+                duration: 20,
+                repeat: -1,
+                ease: "linear"
+            });
+        }, containerRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    return (
+        <section
+            ref={containerRef}
+            className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
+        >
+            {/* Background Elements */}
+            <div className="absolute inset-0 bg-background z-0">
+                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/10 blur-[120px] rounded-full" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 bg-noise" />
+            </div>
+
+            <div className="container relative z-10 px-6 text-center">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                >
+                    <span className="inline-block py-1 px-3 rounded-full bg-white/5 border border-white/10 text-sm font-medium text-gray-400 mb-6 backdrop-blur-sm">
+                        Available for freelance work
+                    </span>
+                </motion.div>
+
+                <motion.h1
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                    className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40"
+                >
+                    Building Digital <br />
+                    <span className="text-white">Masterpieces</span>
+                </motion.h1>
+
+                <motion.p
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                    className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed"
+                >
+                    I craft high-performance websites and applications with a focus on motion, aesthetics, and user experience.
+                </motion.p>
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, delay: 0.8 }}
+                    className="flex flex-col md:flex-row items-center justify-center gap-4"
+                >
+                    <MagneticButton>
+                        <Button className="min-w-[160px]">View Projects</Button>
+                    </MagneticButton>
+                    <MagneticButton>
+                        <Button variant="outline" className="min-w-[160px]">Contact Me</Button>
+                    </MagneticButton>
+                </motion.div>
+            </div>
+
+            {/* Scroll Indicator */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5, duration: 1 }}
+                className="absolute bottom-10 left-1/2 -translate-x-1/2"
+            >
+                <div className="w-[1px] h-16 bg-gradient-to-b from-transparent via-white/50 to-transparent" />
+            </motion.div>
+        </section>
+    );
+};
+
+export default Hero;
