@@ -47,8 +47,7 @@ const Navbar = () => {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/90 backdrop-blur-md border-b border-primary/50 py-4 shadow-[0_4px_20px_rgba(222,28,28,0.1)]' : 'bg-transparent py-6'
-                    }`}
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-background/90 backdrop-blur-md border-b border-primary/50 py-4 shadow-[0_4px_20px_rgba(222,28,28,0.1)]' : 'bg-transparent py-6'}`}
             >
                 <div className="container mx-auto px-6 flex items-center justify-between">
                     <Link to="/" className="text-2xl font-bold tracking-tighter cursor-pointer flex items-center gap-2">
