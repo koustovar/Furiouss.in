@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, query, where, getDocs, orderBy, doc, getDoc } from 'firebase/firestore';
-import { Package, Calendar, Clock, ExternalLink, ArrowLeft, Search, Filter, CheckCircle, Clock4, AlertCircle } from 'lucide-react';
+import { Package, Calendar, Clock, ExternalLink, ArrowLeft, Search, Filter, CheckCircle, Clock4, AlertCircle, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 

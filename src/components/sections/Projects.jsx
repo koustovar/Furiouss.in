@@ -60,6 +60,7 @@ const ProjectCard = ({ project, index }) => {
 const Projects = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -74,9 +75,24 @@ const Projects = () => {
                     id: doc.id,
                     ...doc.data()
                 }));
-                setProjects(projectsData);
+
+                if (projectsData.length > 0) {
+                    setProjects(projectsData);
+                } else {
+                    // Fallback to local data if collection is empty
+                    const localData = await import('../../data/projects').then(m => m.projects.filter(p => p.id.startsWith('p')));
+                    setProjects(localData.slice(0, 4));
+                }
             } catch (error) {
                 console.error("Error fetching projects:", error);
+                setIsError(true);
+                // Fallback to local data on error (like permission issues)
+                try {
+                    const localData = await import('../../data/projects').then(m => m.projects.filter(p => p.id.startsWith('p')));
+                    setProjects(localData.slice(0, 4));
+                } catch (e) {
+                    console.error("Local fallback failed:", e);
+                }
             } finally {
                 setLoading(false);
             }
