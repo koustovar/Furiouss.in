@@ -13,12 +13,14 @@ import Account from './pages/Account';
 import Orders from './pages/Orders';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import AdBlockDetector from './components/utils/AdBlockDetector';
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
         <div className="antialiased text-white bg-background min-h-screen selection:bg-primary/30 selection:text-white">
+          <AdBlockDetector />
           <CustomCursor />
           <Navbar />
           <Routes>
