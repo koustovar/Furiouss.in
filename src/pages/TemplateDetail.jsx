@@ -199,7 +199,7 @@ const TemplateDetail = () => {
                                 <Zap className="w-5 h-5 text-primary" /> Core Features
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {template.features.map((feature, idx) => (
+                                {(template.features || []).map((feature, idx) => (
                                     <div key={idx} className="flex items-center gap-3 text-gray-300">
                                         <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                                         <span>{feature}</span>

@@ -10,11 +10,14 @@ const AllProjects = () => {
     const [searchQuery, setSearchQuery] = useState("");
 
     const filteredProjects = useMemo(() => {
-        return projects.filter(project =>
-            project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            project.category.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [searchQuery]);
+        return projects.filter(project => {
+            const title = project.title || "";
+            const category = project.category || "";
+            const search = searchQuery.toLowerCase();
+            return title.toLowerCase().includes(search) ||
+                category.toLowerCase().includes(search);
+        });
+    }, [searchQuery, projects]);
 
     return (
         <div className="min-h-screen bg-background pt-32 pb-24 px-6">

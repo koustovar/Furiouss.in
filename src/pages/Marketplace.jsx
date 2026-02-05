@@ -12,6 +12,7 @@ const Marketplace = () => {
     const { user, loginWithGoogle } = useAuth();
     const [templates, setTemplates] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
     const [filter, setFilter] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [ordering, setOrdering] = useState(null);
@@ -61,6 +62,7 @@ const Marketplace = () => {
                 }
             } catch (error) {
                 console.error("Error fetching templates:", error);
+                setIsError(true);
                 setTemplates(initialTemplates);
             } finally {
                 setLoading(false);
@@ -78,8 +80,10 @@ const Marketplace = () => {
     };
 
     const filteredTemplates = templates.filter(t => {
-        const matchesFilter = filter === 'all' || t.category === filter;
-        const matchesSearch = t.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const title = t.title || "";
+        const category = t.category || "";
+        const matchesFilter = filter === 'all' || category === filter;
+        const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesFilter && matchesSearch;
     });
 
@@ -138,6 +142,13 @@ const Marketplace = () => {
                         <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
                         <p className="text-gray-600 font-medium font-mono uppercase tracking-[0.3em]">Syncing Marketplace...</p>
                     </div>
+                ) : isError && templates.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-32 text-center">
+                        <ShieldCheck className="w-16 h-16 text-red-500/50 mb-6" />
+                        <h3 className="text-2xl font-bold text-white mb-2">Sync Interrupted</h3>
+                        <p className="text-gray-500 max-w-sm mb-8">We couldn't connect to the marketplace. Please check your connection or try again later.</p>
+                        <Button onClick={() => window.location.reload()}>Retry Connection</Button>
+                    </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <AnimatePresence mode="popLayout">
@@ -185,7 +196,7 @@ const Marketplace = () => {
 
                                         {/* Features List */}
                                         <div className="grid grid-cols-2 gap-y-3 gap-x-4 mb-8">
-                                            {template.features.slice(0, 4).map((f, i) => (
+                                            {(template.features || []).slice(0, 4).map((f, i) => (
                                                 <div key={i} className="flex items-center gap-2 text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none">
                                                     <div className="w-1.5 h-1.5 rounded-full bg-primary/40" /> {f}
                                                 </div>

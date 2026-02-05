@@ -12,27 +12,39 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // Check if user exists in Firestore, if not create them
-                const userRef = doc(db, 'users', user.uid);
-                const userSnap = await getDoc(userRef);
-
-                if (!userSnap.exists()) {
-                    await setDoc(userRef, {
-                        uid: user.uid,
-                        displayName: user.displayName,
-                        email: user.email,
-                        photoURL: user.photoURL,
-                        createdAt: serverTimestamp(),
-                        role: 'user'
-                    });
-                }
-                setUser(user);
-            } else {
-                setUser(null);
-            }
+        if (!auth) {
             setLoading(false);
+            return;
+        }
+
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+            try {
+                if (user) {
+                    // Check if user exists in Firestore, if not create them
+                    if (db) {
+                        const userRef = doc(db, 'users', user.uid);
+                        const userSnap = await getDoc(userRef);
+
+                        if (!userSnap.exists()) {
+                            await setDoc(userRef, {
+                                uid: user.uid,
+                                displayName: user.displayName,
+                                email: user.email,
+                                photoURL: user.photoURL,
+                                createdAt: serverTimestamp(),
+                                role: 'user'
+                            });
+                        }
+                    }
+                    setUser(user);
+                } else {
+                    setUser(null);
+                }
+            } catch (error) {
+                console.error("Error in Auth State Transition:", error);
+            } finally {
+                setLoading(false);
+            }
         });
 
         return unsubscribe;

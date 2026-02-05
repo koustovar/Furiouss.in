@@ -28,11 +28,11 @@ const ProjectCard = ({ project, index }) => {
             <div className="absolute inset-0 p-8 flex flex-col justify-end">
                 <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <span className="text-primary text-sm font-medium tracking-wider uppercase mb-2 block opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                        {project.category}
+                        {project.category || 'Portfolio'}
                     </span>
-                    <h3 className="text-3xl font-bold text-white mb-2">{project.title}</h3>
+                    <h3 className="text-3xl font-bold text-white mb-2">{project.title || 'Untitled Project'}</h3>
                     <p className="text-gray-300 mb-6 max-w-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-200">
-                        {project.description}
+                        {project.description || 'No description available for this project.'}
                     </p>
 
                     <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-300 translate-y-4 group-hover:translate-y-0">
