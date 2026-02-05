@@ -36,10 +36,7 @@ const Checkout = () => {
         lastName: user?.displayName?.split(' ').slice(1).join(' ') || '',
         email: user?.email || '',
         deliveryEmail: user?.email || '',
-        deliveryEmailConfirm: '',
-        cardNumber: '',
-        expiry: '',
-        cvc: ''
+        deliveryEmailConfirm: ''
     });
     const [emailError, setEmailError] = useState('');
 
@@ -88,10 +85,78 @@ const Checkout = () => {
     const nextStep = () => setStep(step + 1);
     const prevStep = () => setStep(step - 1);
 
+    const handleRazorpayPayment = async () => {
+        if (!template) {
+            alert("Product information is still loading. Please try again in a moment.");
+            return;
+        }
+        setIsSubmitting(true);
+
+        const options = {
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+            amount: template.price * 100, // Razorpay works in paise
+            currency: "USD", // Or "INR" if applicable, but prices seem to be in USD
+            name: "Furious.in",
+            description: `Purchase of ${template?.title || 'Digital Template'}`,
+            image: "https://razorpay.com/favicon.png", // Use Razorpay logo as fallback
+            handler: async function (response) {
+                // Payment successful
+                try {
+                    const orderData = {
+                        userId: user.uid,
+                        userEmail: user.email,
+                        deliveryEmail: formData.deliveryEmail,
+                        customerName: `${formData.firstName} ${formData.lastName}`.trim() || user.displayName || 'Guest',
+                        templateId: template.id,
+                        templateTitle: template.title || 'Premium Template',
+                        price: template.price || 0,
+                        status: 'completed',
+                        timestamp: serverTimestamp(),
+                        paymentMethod: 'Razorpay',
+                        paymentId: response.razorpay_payment_id
+                    };
+
+                    const orderRef = await addDoc(collection(db, 'orders'), orderData);
+
+                    // Update User Profile
+                    const userRef = doc(db, 'users', user.uid);
+                    await setDoc(userRef, {
+                        lastDeliveryEmail: formData.deliveryEmail
+                    }, { merge: true });
+
+                    navigate('/orders');
+                } catch (error) {
+                    console.error("Order creation failed:", error);
+                    alert("Payment successful but order creation failed. Please contact support.");
+                } finally {
+                    setIsSubmitting(false);
+                }
+            },
+            prefill: {
+                name: `${formData.firstName} ${formData.lastName}`,
+                email: formData.deliveryEmail,
+            },
+            notes: {
+                address: "Digital Delivery"
+            },
+            theme: {
+                color: "#6366f1" // primary color
+            },
+            modal: {
+                ondismiss: function () {
+                    setIsSubmitting(false);
+                }
+            }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Reset and check errors for Step 1
+        // Step 1: Contact
         if (step === 1) {
             if (formData.deliveryEmail !== formData.deliveryEmailConfirm) {
                 setEmailError('Delivery emails do not match');
@@ -102,42 +167,16 @@ const Checkout = () => {
             return;
         }
 
-        if (step < 3) {
+        // Step 2: Delivery
+        if (step === 2) {
             nextStep();
             return;
         }
 
-        setIsSubmitting(true);
-        try {
-            // 1. Create Order
-            const orderData = {
-                userId: user.uid,
-                userEmail: user.email,
-                deliveryEmail: formData.deliveryEmail,
-                customerName: `${formData.firstName} ${formData.lastName}`,
-                templateId: template.id,
-                templateTitle: template.title,
-                price: template.price,
-                status: 'pending',
-                timestamp: serverTimestamp(),
-                paymentMethod: 'Credit Card (Mock)'
-            };
-
-            const orderRef = await addDoc(collection(db, 'orders'), orderData);
-
-            // 2. Update User Profile with last delivery email
-            const userRef = doc(db, 'users', user.uid);
-            await setDoc(userRef, {
-                lastDeliveryEmail: formData.deliveryEmail
-            }, { merge: true });
-
-            // 3. Success redirect
-            navigate('/orders');
-        } catch (error) {
-            console.error("Checkout failed:", error);
-            alert("Something went wrong with your order. Please try again.");
-        } finally {
-            setIsSubmitting(false);
+        // Step 3: Payment (Razorpay)
+        if (step === 3) {
+            handleRazorpayPayment();
+            return;
         }
     };
 
@@ -285,31 +324,32 @@ const Checkout = () => {
                                         exit={{ opacity: 0, x: -20 }}
                                         className="space-y-6"
                                     >
-                                        <div className="bg-surface/30 p-8 rounded-[2rem] border border-white/5 backdrop-blur-xl">
-                                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                                <CreditCard className="w-5 h-5 text-primary" /> Payment Method
-                                            </h3>
-                                            <div className="space-y-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Card Number</label>
-                                                    <div className="relative">
-                                                        <CreditCard className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                                                        <input required name="cardNumber" value={formData.cardNumber} onChange={handleInput} type="text" placeholder="0000 0000 0000 0000" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary focus:outline-none transition-colors" />
+                                        <div className="bg-surface/30 p-8 rounded-[2rem] border border-white/5 backdrop-blur-xl text-center">
+                                            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20">
+                                                <ShieldCheck className="w-10 h-10 text-primary" />
+                                            </div>
+                                            <h3 className="text-2xl font-bold text-white mb-2">Final Step: Secure Payment</h3>
+                                            <p className="text-gray-400 mb-8">Click the button below to complete your purchase using Razorpay. Your transaction is secure and encrypted.</p>
+
+                                            <div className="bg-white/5 border border-white/10 rounded-3xl p-6 mb-8 inline-block mx-auto min-w-[300px]">
+                                                <div className="flex justify-between items-center gap-12 mb-2">
+                                                    <p className="text-xs text-gray-500 uppercase font-black tracking-widest">Total Amount</p>
+                                                    <p className="text-xl font-bold text-primary">${template.price}</p>
+                                                </div>
+                                                <div className="flex justify-between items-center gap-12 pt-2 border-t border-white/5">
+                                                    <p className="text-xs text-gray-500 uppercase font-black tracking-widest">Product</p>
+                                                    <p className="text-sm font-bold text-white">{template.title}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center justify-center gap-4 py-4 px-6 bg-white/5 rounded-2xl border border-white/10 max-w-sm mx-auto">
+                                                <div className="flex -space-x-2">
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="w-8 h-8 rounded-full bg-white p-1" alt="PayPal" />
+                                                    <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center p-1 border border-gray-200">
+                                                        <img src="https://razorpay.com/favicon.png" className="w-4 h-4" alt="Razorpay" />
                                                     </div>
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">Expiry Date</label>
-                                                        <input required name="expiry" value={formData.expiry} onChange={handleInput} type="text" placeholder="MM/YY" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 focus:border-primary focus:outline-none transition-colors" />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest pl-1">CVC</label>
-                                                        <div className="relative">
-                                                            <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                                                            <input required name="cvc" value={formData.cvc} onChange={handleInput} type="password" placeholder="***" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:border-primary focus:outline-none transition-colors" />
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-left">Supporting UPI, Cards, Netbanking & Wallets via Razorpay</p>
                                             </div>
                                         </div>
                                     </motion.div>

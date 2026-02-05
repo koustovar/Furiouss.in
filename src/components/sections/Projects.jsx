@@ -80,7 +80,7 @@ const Projects = () => {
                     setProjects(projectsData);
                 } else {
                     // Fallback to local data if collection is empty
-                    const localData = await import('../../data/projects').then(m => m.projects.filter(p => p.id.startsWith('p')));
+                    const localData = await import('../../data/projects').then(m => m.projects);
                     setProjects(localData.slice(0, 4));
                 }
             } catch (error) {
@@ -88,7 +88,7 @@ const Projects = () => {
                 setIsError(true);
                 // Fallback to local data on error (like permission issues)
                 try {
-                    const localData = await import('../../data/projects').then(m => m.projects.filter(p => p.id.startsWith('p')));
+                    const localData = await import('../../data/projects').then(m => m.projects);
                     setProjects(localData.slice(0, 4));
                 } catch (e) {
                     console.error("Local fallback failed:", e);
