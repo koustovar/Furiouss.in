@@ -188,8 +188,22 @@ const Orders = () => {
                                                 <p className="text-xs text-gray-500 uppercase font-bold tracking-widest mb-1">Investment</p>
                                                 <p className="text-3xl font-black text-white">${order.price}</p>
                                             </div>
-                                            <div className="flex gap-2">
-                                                <Button variant="outline" className="h-12 w-12 p-0 rounded-2xl border-white/10 hover:border-primary group/btn">
+                                            <div className="flex gap-4">
+                                                {order.deliveryLink && (
+                                                    <a
+                                                        href={order.deliveryLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="h-12 px-6 flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary transition-all rounded-2xl border border-primary/20 text-xs font-black uppercase tracking-widest text-primary hover:text-white"
+                                                    >
+                                                        <ShieldCheck className="w-4 h-4" /> Download Asset
+                                                    </a>
+                                                )}
+                                                <Button
+                                                    variant="outline"
+                                                    className="h-12 w-12 p-0 rounded-2xl border-white/10 hover:border-primary group/btn"
+                                                    onClick={() => window.open(order.deliveryLink || '#', '_blank')}
+                                                >
                                                     <ExternalLink className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                                 </Button>
                                             </div>

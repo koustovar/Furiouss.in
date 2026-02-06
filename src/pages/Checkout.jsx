@@ -125,6 +125,8 @@ const Checkout = () => {
                         customerName: `${formData.firstName} ${formData.lastName}`.trim() || user.displayName || 'Guest',
                         templateId: template.id,
                         templateTitle: template.title || 'Premium Template',
+                        templateImage: template.image || '',
+                        deliveryLink: template.deliveryLink || '',
                         price: template.price || 0,
                         status: 'completed',
                         timestamp: serverTimestamp(),
@@ -132,7 +134,26 @@ const Checkout = () => {
                         paymentId: response.razorpay_payment_id
                     };
 
-                    const orderRef = await addDoc(collection(db, 'orders'), orderData);
+                    const orderRef = await addDoc(collection(db, 'orders'), {
+                        ...orderData,
+                        emailSent: false // Default to false
+                    });
+
+                    // Trigger Instant Email Delivery
+                    try {
+                        const { sendDeliveryEmail } = await import('../utils/mailService');
+                        const isSent = await sendDeliveryEmail({ id: orderRef.id, ...orderData });
+
+                        // Update order with actual email status
+                        if (isSent) {
+                            const { updateDoc, doc: firestoreDoc } = await import('firebase/firestore');
+                            await updateDoc(firestoreDoc(db, 'orders', orderRef.id), {
+                                emailSent: true
+                            });
+                        }
+                    } catch (emailErr) {
+                        console.error("Email delivery failed:", emailErr);
+                    }
 
                     // Update User Profile
                     const userRef = doc(db, 'users', user.uid);
