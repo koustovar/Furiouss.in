@@ -34,7 +34,7 @@ const Modal = ({ isOpen, onClose, title, children, icon: Icon }) => {
                             initial={{ scale: 0.9, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                            className="bg-surface/90 border border-white/10 p-8 rounded-[2.5rem] w-full max-w-lg shadow-2xl backdrop-blur-xl pointer-events-auto relative overflow-hidden group"
+                            className="bg-surface/90 border border-white/10 p-8 rounded-[2.5rem] w-full max-w-4xl shadow-2xl backdrop-blur-xl pointer-events-auto relative overflow-hidden group"
                         >
                             {/* Animated background glow */}
                             <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[80px] group-hover:bg-primary/30 transition-colors" />

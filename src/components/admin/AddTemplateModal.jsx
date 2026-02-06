@@ -11,7 +11,8 @@ const AddTemplateModal = ({ isOpen, onClose, onRefresh, editingTemplate = null }
         title: '',
         category: 'portfolio',
         price: '',
-        image: '',
+        thumbnail: '',
+        images: [''],
         description: '',
         features: '',
         deliveryLink: '',
@@ -22,6 +23,8 @@ const AddTemplateModal = ({ isOpen, onClose, onRefresh, editingTemplate = null }
         if (editingTemplate) {
             setFormData({
                 ...editingTemplate,
+                thumbnail: editingTemplate.thumbnail || editingTemplate.image || '',
+                images: editingTemplate.images || [editingTemplate.image] || [''],
                 features: Array.isArray(editingTemplate.features) ? editingTemplate.features.join(', ') : editingTemplate.features,
                 deliveryLink: editingTemplate.deliveryLink || ''
             });
@@ -30,7 +33,8 @@ const AddTemplateModal = ({ isOpen, onClose, onRefresh, editingTemplate = null }
                 title: '',
                 category: 'portfolio',
                 price: '',
-                image: '',
+                thumbnail: '',
+                images: [''],
                 description: '',
                 features: '',
                 deliveryLink: '',
@@ -38,6 +42,23 @@ const AddTemplateModal = ({ isOpen, onClose, onRefresh, editingTemplate = null }
             });
         }
     }, [editingTemplate, isOpen]);
+
+    const handleImageChange = (index, value) => {
+        const newImages = [...formData.images];
+        newImages[index] = value;
+        setFormData(prev => ({ ...prev, images: newImages }));
+    };
+
+    const addImageField = () => {
+        if (formData.images.length < 20) {
+            setFormData(prev => ({ ...prev, images: [...prev.images, ''] }));
+        }
+    };
+
+    const removeImageField = (index) => {
+        const newImages = formData.images.filter((_, i) => i !== index);
+        setFormData(prev => ({ ...prev, images: newImages.length > 0 ? newImages : [''] }));
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -48,8 +69,12 @@ const AddTemplateModal = ({ isOpen, onClose, onRefresh, editingTemplate = null }
         e.preventDefault();
         setLoading(true);
         try {
+            const cleanImages = formData.images.filter(img => img.trim() !== '');
             const templateData = {
                 ...formData,
+                thumbnail: formData.thumbnail || cleanImages[0] || '',
+                images: cleanImages,
+                image: formData.thumbnail || cleanImages[0] || '', // Primary image for backward compatibility
                 price: parseFloat(formData.price) || 0,
                 rating: parseFloat(formData.rating) || 5.0,
                 features: formData.features.split(',').map(f => f.trim()).filter(f => f !== ''),
@@ -126,15 +151,79 @@ const AddTemplateModal = ({ isOpen, onClose, onRefresh, editingTemplate = null }
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Image URL</label>
-                    <input
-                        required
-                        name="image"
-                        value={formData.image}
-                        onChange={handleChange}
-                        placeholder="https://images.unsplash.com/..."
-                        className="w-full bg-black/40 border border-white/5 rounded-2xl py-3 px-5 text-sm font-medium focus:border-primary/50 outline-none transition-all"
-                    />
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                        <span>📸 Marketplace Thumbnail</span>
+                        <span className="text-[9px] text-gray-600 normal-case tracking-normal">(Main card image)</span>
+                    </label>
+                    <div className="space-y-3">
+                        <input
+                            required
+                            name="thumbnail"
+                            value={formData.thumbnail}
+                            onChange={handleChange}
+                            placeholder="https://images.unsplash.com/..."
+                            className="w-full bg-black/40 border border-white/5 rounded-2xl py-3 px-5 text-sm font-medium focus:border-primary/50 outline-none transition-all"
+                        />
+                        {formData.thumbnail && (
+                            <div className="w-full h-40 rounded-xl overflow-hidden border border-white/10 bg-white/5">
+                                <img
+                                    src={formData.thumbnail}
+                                    alt="Thumbnail Preview"
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => e.target.style.display = 'none'}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex justify-between">
+                        Asset Gallery (Max 20)
+                        <span>{formData.images.length}/20</span>
+                    </label>
+
+                    <div className="space-y-3">
+                        {formData.images.map((img, index) => (
+                            <div key={index} className="flex gap-2 items-start">
+                                <div className="flex-1 space-y-2">
+                                    <div className="flex gap-2">
+                                        <input
+                                            required
+                                            value={img}
+                                            onChange={(e) => handleImageChange(index, e.target.value)}
+                                            placeholder={`Image URL #${index + 1}`}
+                                            className="w-full bg-black/40 border border-white/5 rounded-2xl py-3 px-5 text-sm font-medium focus:border-primary/50 outline-none transition-all"
+                                        />
+                                        {formData.images.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImageField(index)}
+                                                className="p-3 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                    {img && (
+                                        <div className="w-20 h-20 rounded-xl overflow-hidden border border-white/10 bg-white/5">
+                                            <img src={img} alt="Preview" className="w-full h-full object-cover" onError={(e) => e.target.style.display = 'none'} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {formData.images.length < 20 && (
+                        <button
+                            type="button"
+                            onClick={addImageField}
+                            className="w-full py-3 border-2 border-dashed border-white/10 rounded-2xl text-xs font-bold text-gray-500 hover:border-primary/50 hover:text-primary transition-all flex items-center justify-center gap-2"
+                        >
+                            <Upload className="w-4 h-4" /> Add Gallery Image
+                        </button>
+                    )}
                 </div>
 
                 <div className="space-y-2">

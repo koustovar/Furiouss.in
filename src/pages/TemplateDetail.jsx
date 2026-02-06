@@ -13,6 +13,7 @@ const TemplateDetail = () => {
     const { user } = useAuth();
     const [template, setTemplate] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState('');
 
     const initialTemplates = [
         {
@@ -63,12 +64,15 @@ const TemplateDetail = () => {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
-                    setTemplate({ id: docSnap.id, ...docSnap.data() });
+                    const data = { id: docSnap.id, ...docSnap.data() };
+                    setTemplate(data);
+                    setSelectedImage(data.images?.[0] || data.image);
                 } else {
                     // Fallback to initial data if not in firestore
                     const found = initialTemplates.find(t => t.id === id);
                     if (found) {
                         setTemplate(found);
+                        setSelectedImage(found.image);
                     } else {
                         navigate('/marketplace');
                     }
@@ -76,7 +80,10 @@ const TemplateDetail = () => {
             } catch (error) {
                 console.error("Error fetching template:", error);
                 const found = initialTemplates.find(t => t.id === id);
-                if (found) setTemplate(found);
+                if (found) {
+                    setTemplate(found);
+                    setSelectedImage(found.image);
+                }
             } finally {
                 setLoading(false);
             }
@@ -108,6 +115,8 @@ const TemplateDetail = () => {
         );
     }
 
+    const allImages = template.images || [template.image];
+
     return (
         <div className="min-h-screen pt-32 pb-20 bg-[#050505]">
             <div className="container mx-auto px-6">
@@ -122,19 +131,29 @@ const TemplateDetail = () => {
                         animate={{ opacity: 1, x: 0 }}
                         className="space-y-8"
                     >
-                        <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 group shadow-2xl">
-                            <img
-                                src={template.image}
-                                alt={template.title}
-                                className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-700"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 group shadow-2xl bg-white/5">
+                            <AnimatePresence mode="wait">
+                                <motion.img
+                                    key={selectedImage}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    src={selectedImage}
+                                    alt={template.title}
+                                    className="w-full aspect-video object-cover"
+                                />
+                            </AnimatePresence>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="rounded-2xl overflow-hidden border border-white/5 opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
-                                    <img src={template.image} alt="" className="w-full h-24 object-cover" />
+                        <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                            {allImages.map((img, i) => (
+                                <div
+                                    key={i}
+                                    onClick={() => setSelectedImage(img)}
+                                    className={`rounded-xl overflow-hidden border transition-all cursor-pointer aspect-square ${selectedImage === img ? 'border-primary ring-2 ring-primary/20 opacity-100 scale-95' : 'border-white/5 opacity-40 hover:opacity-100'}`}
+                                >
+                                    <img src={img} alt="" className="w-full h-full object-cover" />
                                 </div>
                             ))}
                         </div>
