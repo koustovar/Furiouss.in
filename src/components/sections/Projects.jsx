@@ -19,7 +19,7 @@ const ProjectCard = ({ project, index }) => {
             <div className="absolute inset-0 w-full h-full overflow-hidden">
                 <div
                     className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                    style={{ backgroundImage: `url(${project.image})` }}
+                    style={{ backgroundImage: `url(${project.image ? project.image.split('?')[0] : ''}?q=80&w=800&auto=format&fm=webp&fit=crop)` }}
                 />
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors duration-300" />
             </div>

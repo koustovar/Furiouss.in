@@ -165,8 +165,9 @@ const Marketplace = () => {
                                     {/* Image Container */}
                                     <Link to={`/marketplace/${template.id}`} className="relative h-64 overflow-hidden block">
                                         <img
-                                            src={template.image}
+                                            src={template.image ? `${template.image.split('?')[0]}?q=80&w=600&auto=format&fm=webp&fit=crop` : 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop'}
                                             alt={template.title}
+                                            loading="lazy"
                                             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

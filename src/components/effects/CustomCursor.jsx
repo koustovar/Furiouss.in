@@ -7,22 +7,31 @@ const CustomCursor = () => {
     const [isHovering, setIsHovering] = useState(false);
 
     useEffect(() => {
+        // Disable on mobile/touch devices for performance
+        if (window.matchMedia("(pointer: coarse)").matches) {
+            return;
+        }
+
         const cursor = cursorRef.current;
         const follower = followerRef.current;
 
-        // Move cursor and follower
+        // Use quickSetter for better performance on high-frequency events
+        const xCursorSet = gsap.quickSetter(cursor, "x", "px");
+        const yCursorSet = gsap.quickSetter(cursor, "y", "px");
+        const xFollowerSet = gsap.quickSetter(follower, "x", "px");
+        const yFollowerSet = gsap.quickSetter(follower, "y", "px");
+
         const onMouseMove = (e) => {
-            gsap.to(cursor, {
-                x: e.clientX,
-                y: e.clientY,
-                duration: 0.0005,
-                ease: "power2.out"
-            });
-            gsap.to(follower, {
-                x: e.clientX,
-                y: e.clientY,
-                duration: 0.05,
-                ease: "power3.out"
+            xCursorSet(e.clientX);
+            yCursorSet(e.clientY);
+
+            // Subtle delay for follower
+            gsap.to({}, {
+                duration: 0.1,
+                onUpdate: function () {
+                    xFollowerSet(e.clientX);
+                    yFollowerSet(e.clientY);
+                }
             });
         };
 

@@ -1,19 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import CustomCursor from './components/effects/CustomCursor';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import Home from './pages/Home';
-import AllProjects from './pages/AllProjects';
-import Marketplace from './pages/Marketplace';
-import TemplateDetail from './pages/TemplateDetail';
-import Checkout from './pages/Checkout';
-import Account from './pages/Account';
-import Orders from './pages/Orders';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
 import AdBlockDetector from './components/utils/AdBlockDetector';
+import { Loader2 } from 'lucide-react';
+
+// Lazy load pages
+const Home = lazy(() => import('./pages/Home'));
+const AllProjects = lazy(() => import('./pages/AllProjects'));
+const Marketplace = lazy(() => import('./pages/Marketplace'));
+const TemplateDetail = lazy(() => import('./pages/TemplateDetail'));
+const Checkout = lazy(() => import('./pages/Checkout'));
+const Account = lazy(() => import('./pages/Account'));
+const Orders = lazy(() => import('./pages/Orders'));
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
+
+const PageLoader = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <Loader2 className="w-10 h-10 text-primary animate-spin" />
+  </div>
+);
 
 const App = () => {
   return (
@@ -23,17 +32,21 @@ const App = () => {
           <AdBlockDetector />
           <CustomCursor />
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/all-projects" element={<AllProjects />} />
-            <Route path="/marketplace" element={<Marketplace />} />
-            <Route path="/marketplace/:id" element={<TemplateDetail />} />
-            <Route path="/checkout/:id" element={<Checkout />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-          </Routes>
+          <main>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/all-projects" element={<AllProjects />} />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/marketplace/:id" element={<TemplateDetail />} />
+                <Route path="/checkout/:id" element={<Checkout />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+              </Routes>
+            </Suspense>
+          </main>
           <Footer />
         </div>
       </Router>
