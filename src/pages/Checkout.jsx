@@ -92,13 +92,17 @@ const Checkout = () => {
         }
         setIsSubmitting(true);
 
+        const isProduction = import.meta.env.PROD;
         const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
         console.log("Initializing Razorpay with Key:", razorpayKey ? `${razorpayKey.substring(0, 8)}...` : "UNDEFINED");
 
         if (!razorpayKey || razorpayKey === 'undefined') {
-            const errorMsg = "Razorpay Key ID is missing. Please check your .env file and ensure VITE_RAZORPAY_KEY_ID is set, then restart your dev server.";
-            console.error(errorMsg);
+            const errorMsg = isProduction
+                ? "Payment system is currently unavailable (Configuration Error). Please contact support."
+                : "Razorpay Key ID is missing. Please check your .env file and ensure VITE_RAZORPAY_KEY_ID is set, then restart your dev server.";
+
+            console.error("Razorpay Error:", errorMsg);
             alert(errorMsg);
             setIsSubmitting(false);
             return;

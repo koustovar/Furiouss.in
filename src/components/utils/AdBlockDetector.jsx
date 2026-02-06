@@ -77,11 +77,13 @@ const AdBlockDetector = () => {
                 ) : (
                     <>
                         <p>
-                            Essential <span className="text-white font-bold">Environment Keys</span> are missing from your configuration.
+                            The site's <span className="text-white font-bold">Payment Interface</span> is not fully configured.
                         </p>
                         <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
                             <p className="text-sm text-red-400 font-medium italic">
-                                "Ensure your .env file contains all VITE_ tokens and restart your development server."
+                                {import.meta.env.PROD
+                                    ? "Missing environment variables in hosting dashboard (Vercel/Netlify). Please add VITE_RAZORPAY_KEY_ID to your environment variables."
+                                    : "Ensure your .env file contains all VITE_ tokens and restart your development server."}
                             </p>
                         </div>
                     </>
