@@ -7,11 +7,14 @@ const Footer = () => {
                 <div className="text-center md:text-left">
                     <h3 className="text-xl font-bold mb-2">Furious</h3>
                     <p className="text-gray-400 text-sm">Building digital experiences that matter.</p>
+                    <a href="mailto:furious.arko@gmail.com" className="text-gray-400 hover:text-white transition-colors text-sm">
+                        furious.arko@gmail.com
+                    </a>
                 </div>
 
                 <div className="flex items-center gap-6">
                     <a href="#" className="text-gray-400 hover:text-white transition-colors">Twitter</a>
-                    <a href="#" className="text-gray-400 hover:text-white transition-colors">GitHub</a>
+                    <a href="https://github.com/koustovar" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">GitHub</a>
                     <a href="#" className="text-gray-400 hover:text-white transition-colors">LinkedIn</a>
                 </div>
 
